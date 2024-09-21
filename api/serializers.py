@@ -1,4 +1,4 @@
-from .models import UserProfile
+from .models import *
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
@@ -28,3 +28,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         UserProfile.objects.create(user=user,**profile_data)
         return user
 
+class ContactSerializer(serializers.ModelSerialzer):
+    class Meta:
+        model = Contact
+        fields = '__all__'
+        read_only_fields = ('created_at','updated_at','user')
+
+        def create(self,validated_data):
+            #set user to currently authenticated user
+            validated_data['user'] = self.context['request'].user
+            return super().create(validated_data)

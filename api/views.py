@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework import generics,permissions
+from rest_framework import generics,permissions,viewsets
 from rest_framework import status
 from .models import UserProfile
 from django.contrib.auth.models import User
@@ -27,4 +27,16 @@ class UserListView(generics.ListAPIView):
      permission_classes = (permissions.IsAdminUser,)
      queryset = User.objects.all()
      serializer_class = UserRegistrationSerializer
+
+class ContactViewSet(viewsets.ModelViewSet):
+    serializer_class = ContactSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    #override the default query_set to assign only contacts associated to the currenly authenticated user
+    def get_queryset(self):
+        return Contact.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    
     
