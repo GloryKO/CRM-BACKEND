@@ -38,3 +38,13 @@ class ContactSerializer(serializers.ModelSerialzer):
             #set user to currently authenticated user
             validated_data['user'] = self.context['request'].user
             return super().create(validated_data)
+
+class PropertySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Property
+        fields = '__all__'
+        read_only_fields = ('created_at','updated_at','user')
+    
+    def create(self,validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)

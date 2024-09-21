@@ -43,3 +43,35 @@ class Contact(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+#property management model
+class Property(models.Model):
+    PROPERTY_TYPE_CHOICES = [
+        ('house', 'House'),
+        ('apartment', 'Apartment'),
+        ('condo', 'Condominium'),
+        ('land', 'Land'),
+        ('commercial', 'Commercial'),
+    ]
+
+    STATUS_CHOICES = [
+        ('available', 'Available'),
+        ('under_contract', 'Under Contract'),
+        ('sold', 'Sold'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='properties')
+    title = models.CharField(max_length=100)
+    address = models.TextField()
+    property_type = models.CharField(max_length=20, choices=PROPERTY_TYPE_CHOICES)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='available')
+    price = models.DecimalField(max_digits=12, decimal_places=2)
+    bedrooms = models.PositiveIntegerField()
+    bathrooms = models.DecimalField(max_digits=3, decimal_places=1)
+    square_feet = models.PositiveIntegerField()
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title

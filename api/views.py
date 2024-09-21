@@ -38,5 +38,14 @@ class ContactViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+class PropertyViewSet(viewsets.ModelViewSet):
+    serializer_class = PropertySerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        return Property.objects.filter(user=self.request.user)
     
+    def perfrom_create(self,serializer):
+        serializer.save(user=self.request.user)
     
