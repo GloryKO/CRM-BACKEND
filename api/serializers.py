@@ -1,4 +1,4 @@
-from .models import *
+from . import models
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     class meta:
-        model = UserProfile
+        model = models.UserProfile
         fields = ('id', 'user', 'phone_number', 'address', 'role', 'created_at', 'updated_at')
         read_only_fields = ('created_at', 'updated_at')
 
@@ -25,12 +25,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def create(self,validated_data):
         profile_data = validated_data.pop('profile',{})
         user = User.objects.create_user(**validated_data)
-        UserProfile.objects.create(user=user,**profile_data)
+        models.UserProfile.objects.create(user=user,**profile_data)
         return user
 
-class ContactSerializer(serializers.ModelSerialzer):
+class ContactSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Contact
+        model = models.Contact
         fields = '__all__'
         read_only_fields = ('created_at','updated_at','user')
 
@@ -41,10 +41,22 @@ class ContactSerializer(serializers.ModelSerialzer):
 
 class PropertySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Property
+        model = models.Property
         fields = '__all__'
         read_only_fields = ('created_at','updated_at','user')
     
     def create(self,validated_data):
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
+    
+    
+class AppointmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Appointment
+        fields ='__all__'
+        read_only_fields = ('user','created_at','updated_at')
+    
+
+    def create(self,validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super.create(validated_data)

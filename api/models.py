@@ -75,3 +75,22 @@ class Property(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Appointment(models.Model):
+        STATUS_CHOICES = [
+        ('scheduled', 'Scheduled'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
+        user = models.ForeignKey(User,on_delete=models.CASCADE, related_name='appointments')
+        contact = models.ForeignKey('Contact',on_delete=models.CASCADE,related_name='appointments')
+        property = models.ForeignKey('Property',on_delete=models.CASCADE,related_name='appointment')
+        date_time=models.DateTimeField()
+        duration=models.DurationField()
+        status =models.CharField(max_length=20,choices=STATUS_CHOICES,default='scheduled')
+        notes = models.TextField(blank=True)
+        created_at = models.DateTimeField(auto_now_add=True)
+        updated_at = models.DateTimeField(auto_now=True)
+
+        def __str__(self):
+            return f"Appointment with {self.contact} on {self.date_time}"
