@@ -3,9 +3,15 @@ from django.shortcuts import render
 # Create your views here.
 from rest_framework import generics,permissions,viewsets
 from rest_framework import status
+from rest_framework.views import APIView
 from .models import *
 from django.contrib.auth.models import User
 from .serializers import *
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta
+from django.db.models import Count,Avg
+from rest_framework.response import Response
+
 
 class UserRegistrationView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
@@ -69,4 +75,26 @@ class TaskViewSet(viewsets.ModelViewSet):
     def perform_create(self,serializer):
         return serializer.save(user=self.request.user)
 
-    
+class AnalyticsView(APIView):
+    permission_classes = (permissions.IsAuthenticated)
+
+    def get(self,request):
+        now = timezone.now()
+        last_month = now - relativedelta(months=1)
+        contacts_count =Contact.objects.filter(user=request.user).count()
+        properties_count = Property.objects.filter(user=request.user).count()
+        appointments_count = Appointment.objects.filter(User=request.user,date_time__gte=last_month)
+        tasks_completed =Task.objects.filter(user=request.user,status='done',updated_at__gte=last_month)
+        lead_status_distribution = Contact.objects.filter(user=request.user).values('lead_status').annotate(count=Count('id'))
+        property_type_distribution = Property.objects.filter(user=request.user).values('property_type').annotate(count=Count('id'))
+        avg_property_price = Property.objects.filter(user=request.user).aggregate(Avg('price'))['price__avg']
+
+        return Response({
+            'contacts_count': contacts_count,
+            'properties_count': properties_count,
+            'appointments_last_month': appointments_count,
+            'tasks_completed_last_month': tasks_completed,
+            'lead_status_distribution': lead_status_distribution,
+            'property_type_distribution': property_type_distribution,
+            'avg_property_price': avg_property_price
+        })
