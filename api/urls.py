@@ -7,6 +7,7 @@ router.register(r'contacts',ContactViewSet,basename='contact')
 router.register(r'properties', PropertyViewSet, basename='property')
 router.register(r'appointments', AppointmentViewSet, basename='appointment')
 router.register(r'tasks', TaskViewSet, basename='task')
+router.register(r'documents',DocumentViewset,basename='document')
 #router.register(r'task',TaskViewSet,basename='task')
 urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

@@ -99,7 +99,7 @@ class AnalyticsView(APIView):
             'avg_property_price': avg_property_price
         })
 
-class DocumentView(viewsets.ModelViewSet):
+class DocumentViewset(viewsets.ModelViewSet):
     serializer_class = DocumentSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
