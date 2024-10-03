@@ -75,7 +75,8 @@ class Property(models.Model):
 
     def __str__(self):
         return self.title
-    
+
+#appointment management    
 class Appointment(models.Model):
         STATUS_CHOICES = [
         ('scheduled', 'Scheduled'),
@@ -95,7 +96,7 @@ class Appointment(models.Model):
         def __str__(self):
             return f"Appointment with {self.contact} on {self.date_time}"
 
-
+#task management
 class Task(models.Model):
     PRIORITY_CHOICES = [
         ('low', 'Low'),
@@ -117,6 +118,18 @@ class Task(models.Model):
     due_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+    
+#doc management
+class Document(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='documents')
+    title = models.CharField(max_length=100)
+    file = models.FileField(upload_to='documents/')
+    property = models.ForeignKey('Property', on_delete=models.CASCADE, related_name='documents', null=True, blank=True)
+    contact = models.ForeignKey('Contact', on_delete=models.CASCADE, related_name='documents', null=True, blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title

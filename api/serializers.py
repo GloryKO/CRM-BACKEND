@@ -70,3 +70,13 @@ class TaskSerializer(serializers.ModelSerializer):
     def create(self,validated_data):
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
+
+class DocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Document
+        fields ='__all__'
+        read_only_fields = ('user', 'uploaded_at')
+    
+    def create(self,validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)

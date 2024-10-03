@@ -98,3 +98,13 @@ class AnalyticsView(APIView):
             'property_type_distribution': property_type_distribution,
             'avg_property_price': avg_property_price
         })
+
+class DocumentView(viewsets.ModelViewSet):
+    serializer_class = DocumentSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        return Document.objects.filter(user=self.request.user)
+    
+    def perform_create(self,serializer):
+        return serializer.save(user=self.request.user)
